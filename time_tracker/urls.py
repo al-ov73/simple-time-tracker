@@ -4,17 +4,8 @@ from django.urls import path
 from time_tracker import views
 from django.urls import path
 
-from rest_framework.routers import DefaultRouter
-
-
-# router = DefaultRouter(trailing_slash=True)
-
-# urlpatterns = router.urls
-
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('<int:pk>/task/', views.TaskStatus.as_view(), name='task_status'),
     path('', views.TaskView.as_view(), name='index'),
 ]
-# urlpatterns.extend([
-#     path('', views.TaskSerializerView.as_view(), name='index'),
-# ])
