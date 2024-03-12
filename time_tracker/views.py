@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 class TaskView(View):
 
     def get(self, request, *args, **kwargs):
-        tasks = Task.objects.all().values()
+        tasks = Task.objects.order_by('id').values()
         tasks_json = json.dumps(list(tasks), cls=DjangoJSONEncoder)
         form = TaskForm()
         return render(
