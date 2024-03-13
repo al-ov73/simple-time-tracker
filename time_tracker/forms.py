@@ -8,8 +8,7 @@ class TaskForm(forms.ModelForm):
     name = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control bg-dark text-white',
-                'placeholder': 'Введите имя'
+                'class': 'form-control bg-secondary text-white border-0',
             }
         )
     )
