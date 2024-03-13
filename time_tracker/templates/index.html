@@ -20,54 +20,60 @@
           crossorigin="anonymous">
 
   </head>
-  <body class="d-flex h-100 text-center text-bg-dark justify-content-center">
+  <body class="h-100 text-center text-bg-dark">
 
-    <main class="flex-grow-1">
-      <div class="container-lg mt-3 ">
+    <main>
+      <div class="mt-3">
 
           <div class="row text-center text-bg-dark justify-content-center">
-            <div class="col-auto mx-auto border rounded-3 text-bg-dark p-5">
+            <div class="col-auto border rounded-3 text-bg-dark p-5">
+
+<div class="row justify-content-center">
 
 
-<form action="{% url 'index' %}" class="form-inline" method="post">
+<form class="row justify-content-center" action="{% url 'index' %}" method="post">
   {% csrf_token %}
-  {{form.name}}
-
-<button type="submit"><img src="{% static 'play.png' %}" alt="Thumbs up"></button>
-
+  <div class="col-auto">
+    {{form.name}}
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-dark">Go!</button>
+  </div>
 </form>
-<div class="col-md-8 offset-md-2">
 <script type="text/javascript">
     
 var tasks_json = JSON.parse('{{tasks_json | safe | escapejs}}');
 
 let table = document.createElement('table');
 table.classList.add('table');
-table.classList.add('w-auto');
+
 
 
 for (const task of tasks_json) {
 
-  const row = table.insertRow(); // добавим строку
+  const row = table.insertRow();
+  row.classList.add("justify-content-between");
 
-  let cell1 = row.insertCell(); // добавим ячейки
+  let cell1 = row.insertCell();
   cell1.classList.add("col-xs-5");
-  let cell2 = row.insertCell();
-  cell2.classList.add("col-xs-2");
+  cell1.classList.add("text-start");
+
   let cell3 = row.insertCell();
   var link = `${task.id}/task`;
-  cell1.innerHTML = `<a href="${link}" style="text-decoration: none;" class="link-light">${task.name}</a>`; // вставим текст
-  cell2.innerHTML = "";
-  cell2.classList.add("created");
-  cell3.classList.add("link-primary");
   if (task.status === 'on_work') {
-    cell3.classList.add("timer")
+    cell1.innerHTML = `<a href="${task.id}/show" style="text-decoration: none;" class="link-light">${task.name}</a>`;
   } else {
-    cell3.innerHTML = 'Готово!';
+    cell1.innerHTML = `${task.name}`;
+    cell1.classList.add("text-light");
   }
+
+
+  cell3.classList.add("link-primary");
+  cell3.classList.add("timer")
   cell3.classList.add("col-xs-5");
+  cell3.classList.add("text-end");
 }
-document.body.childNodes[1].childNodes[1].childNodes[1].childNodes[1].appendChild(table);
+document.body.childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes[1].appendChild(table);
 
 </script>
 
@@ -88,19 +94,44 @@ document.body.childNodes[1].childNodes[1].childNodes[1].childNodes[1].appendChil
     var timers = document.getElementsByClassName("timer");
     i = 0;
     for (let timer of timers) {
-      var nowtime = Date.now();
-      var created_str = Date.parse(tasks_json[i].timestamp);
-      var created = parseInt(created_str)
-      var diff = nowtime - created;
-      var totalSecs = Math.round(diff / 1000);
-      timer.innerHTML = secToMin(totalSecs);
+      var nowtime = new Date();
+      var nowHours = nowtime.getHours();
+      var nowMinutes = nowtime.getMinutes();
+      var nowSeconds = nowtime.getSeconds();
+      var nowTotalSeconds = nowHours*60*60 + nowMinutes*60 + nowSeconds;
+
+      var created_str = tasks_json[i].timestamp;
+      var createdTime = created_str.split('T')[1];
+      var createdHours = Number(createdTime.split(':')[0]) + 4;
+      var createdMinutes = Number(createdTime.split(':')[1]);
+      var createdSeconds = Number(createdTime.split(':')[2].split('.')[0]);
+      var createdTotalSeconds = createdHours*60*60 + createdMinutes*60 + createdSeconds;
+      if (tasks_json[i].status === 'on_work') {
+        timer.innerHTML = `${secToMin(nowTotalSeconds - createdTotalSeconds)}`;
+      } else {
+        timer.innerHTML = tasks_json[i].timespend;
+      }
+      
       i += 1;
     }
     setTimeout(calculateTimer, 1000);
   }
   calculateTimer();
 </script>
+
 </div>
+
+
+
+{% if messages %}
+<ul class="alert alert-info alert-dismissible fade show">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</ul>
+{% endif %}
+
+
 </main>
     <footer>
 

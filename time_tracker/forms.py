@@ -6,8 +6,12 @@ from time_tracker.models import Task
 class TaskForm(forms.ModelForm):
 
     name = forms.CharField(
-        label='Название задачи',
-        widget=forms.TextInput(attrs={'class': 'form-input'})
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control bg-dark text-white',
+                'placeholder': 'Введите имя'
+            }
+        )
     )
 
     class Meta:
