@@ -80,8 +80,6 @@ document.body.childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes
 <script>
   function secToMin(time) {
     const sec = time % 60 < 10 ? '0' + time % 60 : time % 60;
-
-    
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor(time / 60) - (hours * 60);
     if (hours > 0) {
@@ -94,24 +92,15 @@ document.body.childNodes[1].childNodes[1].childNodes[1].childNodes[1].childNodes
     var timers = document.getElementsByClassName("timer");
     i = 0;
     for (let timer of timers) {
-      var nowtime = new Date();
-      var nowHours = nowtime.getHours();
-      var nowMinutes = nowtime.getMinutes();
-      var nowSeconds = nowtime.getSeconds();
-      var nowTotalSeconds = nowHours*60*60 + nowMinutes*60 + nowSeconds;
-
       var created_str = tasks_json[i].timestamp;
-      var createdTime = created_str.split('T')[1];
-      var createdHours = Number(createdTime.split(':')[0]) + 4;
-      var createdMinutes = Number(createdTime.split(':')[1]);
-      var createdSeconds = Number(createdTime.split(':')[2].split('.')[0]);
-      var createdTotalSeconds = createdHours*60*60 + createdMinutes*60 + createdSeconds;
+      var now = Date.now();
+      var created = Date.parse(created_str);
+      var diff = Math.round((now - created) /  1000);
       if (tasks_json[i].status === 'on_work') {
-        timer.innerHTML = `${secToMin(nowTotalSeconds - createdTotalSeconds)}`;
+        timer.innerHTML = secToMin(diff);
       } else {
         timer.innerHTML = tasks_json[i].timespend;
       }
-      
       i += 1;
     }
     setTimeout(calculateTimer, 1000);
